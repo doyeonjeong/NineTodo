@@ -30,6 +30,11 @@ struct ContentView: View {
                     ForEach(toDoItems.indices, id: \.self) { index in
                         TodoListCell(isChecked: $toDoItems[index].isDone, title: toDoItems[index].title, description: toDoItems[index].description)
                     }
+                    .onDelete { indexSet in
+                        for index in indexSet {
+                            toDoItems.remove(at: index)
+                        }
+                    }
                 }
             }
         }
