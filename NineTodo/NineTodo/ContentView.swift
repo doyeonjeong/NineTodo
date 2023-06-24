@@ -1,4 +1,3 @@
-//
 //  ContentView.swift
 //  NineTodo
 //
@@ -8,18 +7,18 @@
 import SwiftUI
 
 struct ToDoItem {
-    let id: UUID
+    let id = UUID()
     var title: String
     var description: String
-    var isDone: Bool
+    var isDone: Bool = false
 }
 
 struct ContentView: View {
     
     @State private var toDoItems: [ToDoItem] = [
-        ToDoItem(id: UUID(), title: "Do laundry", description: "Don't forget the fabric softener!", isDone: false),
-        ToDoItem(id: UUID(), title: "Buy groceries", description: "Milk, eggs, bread", isDone: false),
-        ToDoItem(id: UUID(), title: "Workout", description: "30 minutes of cardio", isDone: false)
+        ToDoItem(title: "Do laundry", description: "Don't forget the fabric softener!"),
+        ToDoItem(title: "Buy groceries", description: "Milk, eggs, bread"),
+        ToDoItem(title: "Workout", description: "30 minutes of cardio")
     ]
     
     @State private var isPresentingNewTodoView = false
@@ -73,6 +72,7 @@ struct TodoListCell: View {
         HStack {
             Button {
                 isChecked.toggle()
+                isChecked(isChecked: isChecked)
             } label: {
                 Image(systemName: isChecked ? "checkmark.square" : "square")
                     .resizable()
@@ -92,11 +92,16 @@ struct TodoListCell: View {
             }
         }
     }
+    
+    func isChecked(isChecked: Bool){
+        print(isChecked)
+    }
 }
 
 struct NewTodoView: View {
-    @State private var title = ""
-    @State private var description = ""
+    @State private var title: String = ""
+    @State private var description: String = ""
+    @State private var tasks = [ToDoItem]()
     
     var body: some View {
         VStack {
@@ -119,7 +124,7 @@ struct NewTodoView: View {
                 .padding(.bottom, 20)
             
             Button(action: {
-                // Add your save action here
+                addTodo()
             }) {
                 Text("저장하기")
                     .font(.system(size: 20, weight: .bold))
@@ -132,6 +137,13 @@ struct NewTodoView: View {
         }
         .padding()
     }
+    
+        func addTodo() {  // 변경: 매개변수 제거
+           let todo = ToDoItem(title: title, description: description)
+           tasks.append(todo)
+            print(tasks.first!)
+       }
+    
 }
 
 
