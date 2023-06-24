@@ -22,6 +22,8 @@ struct ContentView: View {
         ToDoItem(id: UUID(), title: "Workout", description: "30 minutes of cardio", isDone: false)
     ]
     
+    @State private var isPresentingNewTodoView = false
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -29,11 +31,6 @@ struct ContentView: View {
                 List {
                     ForEach(toDoItems.indices, id: \.self) { index in
                         TodoListCell(isChecked: $toDoItems[index].isDone, title: toDoItems[index].title, description: toDoItems[index].description)
-                    }
-                    .onDelete { indexSet in
-                        for index in indexSet {
-                            toDoItems.remove(at: index)
-                        }
                     }
                 }
             }
@@ -46,14 +43,17 @@ struct ContentView: View {
                 Text("Nine Todo")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                    
+                
                 Spacer()
-                Button(action: {
-                    // Add your action here for "+" button
-                }) {
-                    Image(systemName: "plus")
-                        .resizable()
-                        .frame(width: 20, height: 20)
+                
+                NavigationLink(destination: NewTodoView(), isActive: $isPresentingNewTodoView) {
+                    Button(action: {
+                        isPresentingNewTodoView = true
+                    }) {
+                        Image(systemName: "plus")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                    }
                 }
             }
             .padding(.horizontal, 24)
@@ -61,6 +61,7 @@ struct ContentView: View {
         }
     }
 }
+
 
 struct TodoListCell: View {
     
@@ -92,6 +93,48 @@ struct TodoListCell: View {
         }
     }
 }
+
+struct NewTodoView: View {
+    @State private var title = ""
+    @State private var description = ""
+    
+    var body: some View {
+        VStack {
+            Text("New Todo")
+                .font(.system(size: 26, weight: .bold))
+                .padding(.bottom, 20)
+            
+            TextField("Title", text: $title)
+                .font(.system(size: 20, weight: .regular))
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(10)
+                .padding(.bottom, 10)
+            
+            TextField("Description", text: $description)
+                .font(.system(size: 20, weight: .regular))
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(10)
+                .padding(.bottom, 20)
+            
+            Button(action: {
+                // Add your save action here
+            }) {
+                Text("저장하기")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue)
+                    .cornerRadius(10)
+            }
+        }
+        .padding()
+    }
+}
+
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
