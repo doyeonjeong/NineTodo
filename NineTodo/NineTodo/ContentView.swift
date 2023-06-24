@@ -7,19 +7,12 @@
 
 import SwiftUI
 
-struct ToDoItem {
-    let id: UUID
-    var title: String
-    var description: String
-    var isDone: Bool
-}
-
 struct ContentView: View {
     
     @State private var toDoItems: [ToDoItem] = [
-        ToDoItem(id: UUID(), title: "Do laundry", description: "Don't forget the fabric softener!", isDone: false),
-        ToDoItem(id: UUID(), title: "Buy groceries", description: "Milk, eggs, bread", isDone: false),
-        ToDoItem(id: UUID(), title: "Workout", description: "30 minutes of cardio", isDone: false)
+        ToDoItem(title: "Do laundry", description: "Don't forget the fabric softener!"),
+        ToDoItem(title: "Buy groceries", description: "Milk, eggs, bread"),
+        ToDoItem(title: "Workout", description: "30 minutes of cardio")
     ]
     
     @State private var isPresentingNewTodoView = false
@@ -61,7 +54,6 @@ struct ContentView: View {
         }
     }
 }
-
 
 struct TodoListCell: View {
     
@@ -133,8 +125,6 @@ struct NewTodoView: View {
         .padding()
     }
 }
-
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
