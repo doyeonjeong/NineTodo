@@ -24,16 +24,38 @@ struct ContentView: View {
     
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(toDoItems.indices, id: \.self) { index in
-                    TodoListCell(isChecked: $toDoItems[index].isDone, title: toDoItems[index].title, description: toDoItems[index].description)
+            VStack {
+                headerView
+                List {
+                    ForEach(toDoItems.indices, id: \.self) { index in
+                        TodoListCell(isChecked: $toDoItems[index].isDone, title: toDoItems[index].title, description: toDoItems[index].description)
+                    }
                 }
             }
         }
-        .navigationTitle("Nine Todo")
+    }
+    
+    var headerView: some View {
+        ZStack {
+            HStack {
+                Text("Nine Todo")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    
+                Spacer()
+                Button(action: {
+                    // Add your action here for "+" button
+                }) {
+                    Image(systemName: "plus")
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                }
+            }
+            .padding(.horizontal, 24)
+            .padding(.top, 12)
+        }
     }
 }
-
 
 struct TodoListCell: View {
     
@@ -65,7 +87,6 @@ struct TodoListCell: View {
         }
     }
 }
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
