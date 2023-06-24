@@ -7,12 +7,16 @@
 
 import Foundation
 
-class TodoManager {
+import Foundation
+
+class TodoManager: ObservableObject {
     private let fileURL: URL
+    @Published var todos: [ToDoItem] = []
     
     init() {
         let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         fileURL = documentDirectory.appendingPathComponent("todos.json")
+        loadTodos()
     }
     
     func save(todos: [ToDoItem]) throws {
@@ -20,23 +24,30 @@ class TodoManager {
         try data.write(to: fileURL)
     }
     
-    func load() throws -> [ToDoItem] {
-        let data = try Data(contentsOf: fileURL)
-        let todos = try JSONDecoder().decode([ToDoItem].self, from: data)
-        return todos
+    func loadTodos() {
+        do {
+            let data = try Data(contentsOf: fileURL)
+            let loadedTodos = try JSONDecoder().decode([ToDoItem].self, from: data)
+            self.todos = loadedTodos
+        } catch {
+            print("Failed to load todos: \(error)")
+        }
     }
     
     func update(todo: ToDoItem) throws {
-        var todos = try load()
         if let index = todos.firstIndex(where: { $0.id == todo.id }) {
             todos[index] = todo
             try save(todos: todos)
         }
     }
-
+    
     func delete(todo: ToDoItem) throws {
-        var todos = try load()
         todos.removeAll(where: { $0.id == todo.id })
+        try save(todos: todos)
+    }
+    
+    func add(todo: ToDoItem) throws {
+        todos.append(todo)
         try save(todos: todos)
     }
 }

@@ -7,13 +7,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    
-    @State private var toDoItems: [ToDoItem] = [
-        ToDoItem(title: "Do laundry", description: "Don't forget the fabric softener!"),
-        ToDoItem(title: "Buy groceries", description: "Milk, eggs, bread"),
-        ToDoItem(title: "Workout", description: "30 minutes of cardio")
-    ]
-    
+    @EnvironmentObject var todoManager: TodoManager
     @State private var isPresentingNewTodoView = false
     
     var body: some View {
@@ -21,9 +15,10 @@ struct ContentView: View {
             VStack {
                 headerView
                 List {
-                    ForEach(toDoItems.indices, id: \.self) { index in
-                        TodoListCell(isChecked: $toDoItems[index].isDone, title: toDoItems[index].title, description: toDoItems[index].description)
+                    ForEach(todoManager.todos.indices, id: \.self) { index in
+                        TodoListCell(isChecked: $todoManager.todos[index].isDone, title: todoManager.todos[index].title, description: todoManager.todos[index].description)
                     }
+                    
                 }
             }
         }
@@ -38,7 +33,7 @@ struct ContentView: View {
                 
                 Spacer()
                 
-                NavigationLink(destination: NewTodoView(), isActive: $isPresentingNewTodoView) {
+                NavigationLink(destination: NewTodoView().environmentObject(todoManager), isActive: $isPresentingNewTodoView) {
                     Button(action: {
                         isPresentingNewTodoView = true
                     }) {
@@ -55,45 +50,38 @@ struct ContentView: View {
 }
 
 struct TodoListCell: View {
-    
     @Binding var isChecked: Bool
     var title: String
     var description: String
     
     var body: some View {
         HStack {
-            Button {
+            Button(action: {
                 isChecked.toggle()
-                isChecked(isChecked: isChecked)
-            } label: {
+            }) {
                 Image(systemName: isChecked ? "checkmark.square" : "square")
                     .resizable()
                     .frame(width: 20, height: 20)
                     .foregroundColor(.black)
             }
-            VStack {
+            
+            VStack(alignment: .leading) {
                 Text(title)
                     .font(.system(size: 20, weight: .bold))
-                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 20)
                 
                 Text(description)
                     .font(.system(size: 16, weight: .regular))
-                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 20)
             }
         }
     }
-    
-    func isChecked(isChecked: Bool){
-        print(isChecked)
-    }
 }
 
 struct NewTodoView: View {
+    @EnvironmentObject var todoManager: TodoManager
     @State private var title: String = ""
     @State private var description: String = ""
-    @State private var tasks = [ToDoItem]()
     
     var body: some View {
         VStack {
@@ -130,16 +118,19 @@ struct NewTodoView: View {
         .padding()
     }
     
-        func addTodo() {  // 변경: 매개변수 제거
-           let todo = ToDoItem(title: title, description: description)
-           tasks.append(todo)
-            print(tasks.first!)
-       }
-    
+    func addTodo() {
+        let newTodo = ToDoItem(title: title, description: description, isDone: false)
+        do {
+            try todoManager.add(todo: newTodo)
+        } catch {
+            print("Failed to add todo: \(error)")
+        }
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .environmentObject(TodoManager())
     }
 }

@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct ToDoItem: Codable {
+@available(iOS 14.0, *)
+struct ToDoItem: Identifiable, Codable, Hashable {
     let id = UUID()
     var title: String
     var description: String
