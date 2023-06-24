@@ -6,13 +6,6 @@
 
 import SwiftUI
 
-struct ToDoItem {
-    let id = UUID()
-    var title: String
-    var description: String
-    var isDone: Bool = false
-}
-
 struct ContentView: View {
     
     @State private var toDoItems: [ToDoItem] = [
@@ -60,7 +53,6 @@ struct ContentView: View {
         }
     }
 }
-
 
 struct TodoListCell: View {
     
@@ -145,8 +137,6 @@ struct NewTodoView: View {
        }
     
 }
-
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
